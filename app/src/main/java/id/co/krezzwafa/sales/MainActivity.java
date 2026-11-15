@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
@@ -24,142 +23,88 @@ import android.net.Uri;
 
 public class MainActivity extends Activity {
     private static final String DASHBOARD_URL =
-        "https://script.google.com/macros/s/AKfycbzqwtmEvZx4Eeh6s_XWRbkgVwjKuGxPmKrOjBOYOPG_sQHVe3uWtBaJJhpGMyNssl6/exec";
+        "https://script.google.com/macros/s/AKfycbzqwtmEvZx4Eeh6s6_XWRbkgVwjKuGxPmKrOjBOYOPG_sQHVe3uWtBaJJhpGMyNssl6/exec";
     private WebView webView;
     private FrameLayout root;
     private View splash;
-    private ProgressBar progress;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(Color.rgb(184, 15, 23));
-        getWindow().setNavigationBarColor(Color.rgb(23, 9, 10));
+    @Override public void onCreate(Bundle state) {
+        super.onCreate(state);
+        getWindow().setStatusBarColor(Color.rgb(184,15,23));
+        getWindow().setNavigationBarColor(Color.rgb(23,9,10));
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(new WebView(this), true);
-
         root = new FrameLayout(this);
-        root.setBackgroundColor(Color.rgb(23, 9, 10));
+        root.setBackgroundColor(Color.rgb(23,9,10));
         webView = new WebView(this);
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
-        settings.setLoadsImagesAutomatically(true);
-        settings.setSupportZoom(false);
-        settings.setBuiltInZoomControls(false);
-        settings.setDisplayZoomControls(false);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setSupportMultipleWindows(false);
-        settings.setUserAgentString(settings.getUserAgentString() + " KrezzWafaAndroid/1.0");
-        webView.setBackgroundColor(Color.rgb(23, 9, 10));
+        CookieManager.getInstance().setAcceptCookie(true);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
+        WebSettings s = webView.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setDatabaseEnabled(true);
+        s.setLoadsImagesAutomatically(true);
+        s.setSupportZoom(false);
+        s.setJavaScriptCanOpenWindowsAutomatically(true);
+        s.setUserAgentString(s.getUserAgentString()+" KrezzWafaAndroid/1.0");
+        webView.setBackgroundColor(Color.rgb(23,9,10));
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Uri uri = request.getUrl();
-                String scheme = uri.getScheme() == null ? "" : uri.getScheme();
-                String host = uri.getHost() == null ? "" : uri.getHost();
-                if ("http".equals(scheme) || "https".equals(scheme)) {
-                    if (host.equals("script.google.com") || host.endsWith(".googleusercontent.com")
-                        || host.equals("accounts.google.com")) return false;
-                    try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); }
-                    catch (Exception ignored) { }
-                    return true;
-                }
-                try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); }
-                catch (Exception ignored) { }
+            @Override public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
+                Uri u=r.getUrl(); String scheme=u.getScheme()==null?"":u.getScheme();
+                String host=u.getHost()==null?"":u.getHost();
+                if (("https".equals(scheme)||"http".equals(scheme)) &&
+                    (host.equals("script.google.com") || host.endsWith(".googleusercontent.com") ||
+                     host.equals("accounts.google.com"))) return false;
+                try { startActivity(new Intent(Intent.ACTION_VIEW,u)); } catch(Exception ignored) {}
                 return true;
             }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
+            @Override public void onPageFinished(WebView v,String url) {
                 root.postDelayed(() -> {
-                    if (splash != null) {
-                        root.removeView(splash);
-                        splash = null;
-                    }
+                    if(splash!=null){root.removeView(splash);splash=null;}
                     webView.setVisibility(View.VISIBLE);
-                }, 350);
+                },300);
             }
         });
-
         webView.setVisibility(View.INVISIBLE);
-        root.addView(webView, new FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        splash = createSplash();
-        root.addView(splash, new FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        root.addView(webView,new FrameLayout.LayoutParams(-1,-1));
+        splash=makeSplash();
+        root.addView(splash,new FrameLayout.LayoutParams(-1,-1));
         setContentView(root);
         webView.loadUrl(DASHBOARD_URL);
     }
 
-    private View createSplash() {
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setGravity(Gravity.CENTER);
-        layout.setPadding(36, 30, 36, 30);
-        layout.setBackgroundColor(Color.rgb(23, 9, 10));
-
-        ImageView logo = new ImageView(this);
-        logo.setImageResource(R.drawable.krezz_logo);
+    private View makeSplash() {
+        LinearLayout l=new LinearLayout(this); l.setOrientation(1);
+        l.setGravity(Gravity.CENTER); l.setPadding(32,24,32,24);
+        l.setBackgroundColor(Color.rgb(23,9,10));
+        ImageView logo=new ImageView(this); logo.setImageResource(R.drawable.krezz_logo);
         logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        LinearLayout.LayoutParams logoParams = new LinearLayout.LayoutParams(230, 230);
-        logoParams.bottomMargin = 26;
-        layout.addView(logo, logoParams);
-
-        TextView title = new TextView(this);
-        title.setText("KREZZWAFA");
-        title.setTextColor(Color.WHITE);
-        title.setTextSize(25);
-        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setLetterSpacing(0.12f);
-        title.setGravity(Gravity.CENTER);
-        layout.addView(title);
-
-        TextView subtitle = new TextView(this);
-        subtitle.setText("SALES MANAGEMENT");
-        subtitle.setTextColor(Color.rgb(255, 210, 28));
-        subtitle.setTextSize(11);
-        subtitle.setLetterSpacing(0.2f);
-        subtitle.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams subParams = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        subParams.topMargin = 8;
-        subParams.bottomMargin = 28;
-        layout.addView(subtitle, subParams);
-
-        ProgressBar bar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
-        bar.setIndeterminate(true);
-        bar.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(Color.rgb(229, 9, 20)));
-        LinearLayout.LayoutParams barParams = new LinearLayout.LayoutParams(150, 4);
-        layout.addView(bar, barParams);
-
-        TextView loading = new TextView(this);
-        loading.setText("Menyiapkan dashboard...");
-        loading.setTextColor(Color.rgb(190, 170, 170));
-        loading.setTextSize(12);
-        LinearLayout.LayoutParams loadParams = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        loadParams.topMargin = 15;
-        layout.addView(loading, loadParams);
-        return layout;
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(220,220);
+        lp.bottomMargin=24; l.addView(logo,lp);
+        TextView title=new TextView(this); title.setText("KREZZWAFA");
+        title.setTextColor(Color.WHITE); title.setTextSize(25);
+        title.setTypeface(Typeface.DEFAULT,Typeface.BOLD); title.setLetterSpacing(.12f);
+        title.setGravity(Gravity.CENTER); l.addView(title);
+        TextView sub=new TextView(this); sub.setText("SALES MANAGEMENT");
+        sub.setTextColor(Color.rgb(255,210,28)); sub.setTextSize(11);
+        sub.setLetterSpacing(.18f); sub.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams sp=new LinearLayout.LayoutParams(-2,-2);
+        sp.topMargin=8; sp.bottomMargin=28; l.addView(sub,sp);
+        ProgressBar p=new ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal);
+        p.setIndeterminate(true);
+        p.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(Color.rgb(229,9,20)));
+        l.addView(p,new LinearLayout.LayoutParams(150,5));
+        TextView loading=new TextView(this); loading.setText("Menyiapkan dashboard...");
+        loading.setTextColor(Color.LTGRAY); loading.setTextSize(12);
+        LinearLayout.LayoutParams tlp=new LinearLayout.LayoutParams(-2,-2);
+        tlp.topMargin=15; l.addView(loading,tlp);
+        return l;
     }
-
-    @Override
-    public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) webView.goBack();
-        else super.onBackPressed();
+    @Override public void onBackPressed() {
+        if(webView!=null && webView.canGoBack()) webView.goBack(); else super.onBackPressed();
     }
-
-    @Override
-    protected void onDestroy() {
-        if (webView != null) {
-            webView.stopLoading();
-            webView.destroy();
-        }
+    @Override protected void onDestroy() {
+        if(webView!=null){webView.stopLoading();webView.destroy();}
         super.onDestroy();
     }
 }
