@@ -2,7 +2,7 @@
 
 Android WebView app for the live KrezzWafa Sales Dashboard.
 
-Dashboard: https://script.google.com/macros/s/AKfycbzqwtmEvZx4Eeh6s6_XWRbkgVwjKuGxPmKrOjBOYOPG_sQHVe3uWtBaJJhpGMyNssl6/exec
+Dashboard: https://script.google.com/macros/s/AKfycbzqwtmEvZx4Eeh6s_XWRbkgVwjKuGxPmKrOjBOYOPG_sQHVe3uWtBaJJhpGMyNssl6/exec
 
 ## Build and download
 1. Open the repository **Actions** tab.
