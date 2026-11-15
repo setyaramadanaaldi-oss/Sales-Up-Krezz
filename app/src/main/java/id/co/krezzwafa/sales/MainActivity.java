@@ -23,7 +23,7 @@ import android.net.Uri;
 
 public class MainActivity extends Activity {
     private static final String DASHBOARD_URL =
-        "https://script.google.com/macros/s/AKfycbzqwtmEvZx4Eeh6s6_XWRbkgVwjKuGxPmKrOjBOYOPG_sQHVe3uWtBaJJhpGMyNssl6/exec";
+        "https://script.google.com/macros/s/AKfycbzqwtmEvZx4Eeh6s_XWRbkgVwjKuGxPmKrOjBOYOPG_sQHVe3uWtBaJJhpGMyNssl6/exec";
     private WebView webView;
     private FrameLayout root;
     private View splash;
