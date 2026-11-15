@@ -1,6 +1,9 @@
 package id.co.krezzwafa.sales;
 
 import android.app.Activity;
+import android.os.Build;
+import android.provider.Settings;
+import android.widget.Toast;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -33,6 +36,8 @@ public class MainActivity extends Activity {
     private TextView loadingText;
     private ProgressBar progress;
     private boolean pageLoaded = false;
+
+    private static final int OVERLAY_PERMISSION_REQUEST = 7201;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -102,6 +107,35 @@ public class MainActivity extends Activity {
         root.addView(splash,new FrameLayout.LayoutParams(-1,-1));
         setContentView(root);
         webView.loadUrl(DASHBOARD_URL);
+        enableFloatingShortcut();
+    }
+
+    private void enableFloatingShortcut() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Toast.makeText(this, "Izinkan KrezzWafa tampil di atas aplikasi lain untuk mengaktifkan shortcut mengambang.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST);
+        } else {
+            startFloatingService();
+        }
+    }
+
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == OVERLAY_PERMISSION_REQUEST) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
+                startFloatingService();
+            } else {
+                Toast.makeText(this, "Shortcut mengambang belum aktif. Izin bisa diaktifkan dari Pengaturan Android.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void startFloatingService() {
+        Intent service = new Intent(this, FloatingShortcutService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(service);
+        else startService(service);
     }
 
     private void showDashboard() {
