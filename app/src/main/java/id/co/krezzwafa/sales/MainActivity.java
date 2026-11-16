@@ -147,7 +147,7 @@ public class MainActivity extends Activity {
         LinearLayout l=new LinearLayout(this); l.setOrientation(1);
         l.setGravity(Gravity.CENTER); l.setPadding(32,24,32,24);
         l.setBackgroundColor(Color.rgb(23,9,10));
-        ImageView logo=new ImageView(this); logo.setImageResource(R.drawable.krezz_logo);
+        ImageView logo=new ImageView(this); logo.setImageResource(R.drawable.ic_launcher);
         logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(220,220);
         lp.bottomMargin=24; l.addView(logo,lp);
