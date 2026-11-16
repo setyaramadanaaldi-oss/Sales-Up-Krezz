@@ -1,4 +1,4 @@
-name: Build KrezzWafa Android APK
+name: Build Aldi Life Android APK
 
 on:
   push:
@@ -27,11 +27,11 @@ jobs:
           gradle-version: '8.9'
 
       - name: Build debug APK
-        run: gradle --no-daemon :app:assembleDebug
+        run: gradle -p aldi-life-android --no-daemon :app:assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: KrezzWafa-Sales-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: Aldi-Life-APK
+          path: aldi-life-android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
